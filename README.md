@@ -31,7 +31,7 @@ SpendWise AI is a **personal finance management web application** that helps use
 - **Chart.js / Recharts** (for charts)  
 - **Tesseract.js** (for AI bill scanning)  
 - Your preferred CSS framework or custom styling
-- 
+  
 ## Installation
 1. Clone the repository:
 
