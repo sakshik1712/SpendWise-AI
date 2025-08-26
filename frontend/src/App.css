@@ -1,0 +1,109 @@
+/* Smooth transitions for mode change */
+.container {
+  transition: background-color 0.3s, color 0.3s;
+  min-height: 100vh;
+  padding: 12px;
+}
+
+/* LIGHT MODE */
+.container.light-mode {
+  background-color: #f5f5f5;
+  color: #222;
+}
+
+/* DARK MODE */
+.container.dark-mode {
+  background-color: #121212; /* true dark */
+  color: #f5f5f5;
+}
+
+/* Cards */
+.card {
+  background-color: inherit;
+  color: inherit;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Inputs */
+.input {
+  padding: 6px 8px;
+  margin-right: 6px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: inherit;
+  color: inherit;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Buttons */
+.btn {
+  padding: 6px 12px;
+  margin-right: 6px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.container.light-mode .btn {
+  background-color: #ddd;
+  color: #222;
+}
+
+.container.dark-mode .btn {
+  background-color: #444;
+  color: #f5f5f5;
+}
+
+/* Toggle button */
+.btn-toggle {
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.container.dark-mode .table {
+  background-color: #222;
+  color: #f5f5f5;
+}
+
+.container.dark-mode .table th,
+.container.dark-mode .table td {
+  border-color: #555;
+}
+
+.container.light-mode .table {
+  background-color: #fff;
+  color: #222;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+}
+
+/* Grid layout */
+.form-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
