@@ -16,7 +16,6 @@ export default function Dashboard() {
   const [expenses, setExpenses] = useState([]);
   const [revenues, setRevenues] = useState([]);
   const [user, setUser] = useState({ name: "", budget: 0 });
-  const [filter, setFilter] = useState({});
   const [editingExpense, setEditingExpense] = useState(null);
   const [editingRevenue, setEditingRevenue] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
@@ -61,7 +60,6 @@ export default function Dashboard() {
 
   // Filters
   const applyFilter = async (f) => {
-    setFilter(f);
     const params = {};
     if (f.category) params.category = f.category;
     if (f.month) params.month = f.month;
