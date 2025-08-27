@@ -2,24 +2,23 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const sequelize = require("./config/db");
+const morgan = require("morgan");
 
 const expenses = require("./routes/expenses");
 const revenues = require("./routes/revenues");
 const users = require("./routes/users");
-const billRoute = require("./routes/bill"); 
-
+const billRoute = require("./routes/bill");
 
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
 app.use(express.json());
-
-// Optional: simple logger
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
-});
+app.use(morgan("dev"));
 
 // Routes
 app.use("/api/expenses", expenses);
@@ -45,7 +44,7 @@ sequelize.authenticate()
   .then(() => console.log("DB connected"))
   .catch(err => console.error("DB connection failed:", err));
 
-sequelize.sync({ alter: true }) // auto-update tables
+sequelize.sync({ alter: true })
   .then(() => {
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   });
