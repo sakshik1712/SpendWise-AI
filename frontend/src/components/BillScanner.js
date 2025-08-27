@@ -16,7 +16,7 @@ export default function BillScanner({ onAddExpense }) {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/bill/scan", {
+      const res = await fetch("https://spendwise-ai-78vp.onrender.com/api/bill/scan", {
         method: "POST",
         body: formData
       });
