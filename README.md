@@ -2,6 +2,8 @@
 
 SpendWise AI is a **personal finance management web application** that helps users track expenses, revenues, and budgets efficiently. It includes AI-powered bill scanning, interactive charts, and a modern dashboard to visualize financial data.
 
+Live: : https://spendwiseapp-ai.netlify.app/
+
 ---
 
 ## Features
