@@ -8,7 +8,7 @@ import RevenueForm from "../components/RevenueForm";
 import CategoryBar from "../components/Charts/CategoryBar";
 import MonthlyLine from "../components/Charts/MonthlyLine";
 import BudgetPie from "../components/Charts/BudgetPie";
-import BillScanner from "../components/BillScanner"; // AI Bill Scanner
+import BillScanner from "../components/BillScanner";
 import { expenses as expAPI, revenues as revAPI, users as userAPI } from "../api/api";
 
 export default function Dashboard() {
@@ -20,15 +20,19 @@ export default function Dashboard() {
   const [editingRevenue, setEditingRevenue] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
 
-  // Load all data
-  async function loadAll() {
-    const e = await expAPI.get();
-    const r = await revAPI.get();
-    const u = await userAPI.get();
-    setExpenses(e.data);
-    setRevenues(r.data);
-    setUser(u.data);
-  }
+  // Load all data with error handling
+  const loadAll = async () => {
+    try {
+      const e = await expAPI.get();
+      const r = await revAPI.get();
+      const u = await userAPI.get();
+      setExpenses(e);
+      setRevenues(r);
+      setUser(u);
+    } catch (err) {
+      console.error("Failed to load data:", err);
+    }
+  };
 
   useEffect(() => {
     loadAll();
@@ -58,49 +62,27 @@ export default function Dashboard() {
     }, {})
   ).map(([month, value]) => ({ month, value }));
 
-  // Filters
+  // Filters with error handling
   const applyFilter = async (f) => {
-    const params = {};
-    if (f.category) params.category = f.category;
-    if (f.month) params.month = f.month;
-    const res = await expAPI.get(params);
-    setExpenses(res.data);
+    try {
+      const params = {};
+      if (f.category) params.category = f.category;
+      if (f.month) params.month = f.month;
+      const res = await expAPI.get(params);
+      setExpenses(res);
+    } catch (err) {
+      console.error("Failed to apply filter:", err);
+    }
   };
 
   // CRUD functions
-  const addExpense = async (data) => {
-    await expAPI.create(data);
-    await loadAll();
-    setActive("Expenses");
-  };
-  const updateExpense = async (id, data) => {
-    await expAPI.update(id, data);
-    await loadAll();
-    setEditingExpense(null);
-  };
-  const deleteExpense = async (id) => {
-    await expAPI.remove(id);
-    await loadAll();
-  };
-  const addRevenue = async (data) => {
-    await revAPI.create(data);
-    await loadAll();
-    setActive("Revenues");
-  };
-  const updateRevenue = async (id, data) => {
-    await revAPI.update(id, data);
-    await loadAll();
-    setEditingRevenue(null);
-  };
-  const deleteRevenue = async (id) => {
-    await revAPI.remove(id);
-    await loadAll();
-  };
-  const updateUser = async (payload) => {
-    await userAPI.update(payload);
-    const r = await userAPI.get();
-    setUser(r.data);
-  };
+  const addExpense = async (data) => { await expAPI.create(data); await loadAll(); setActive("Expenses"); };
+  const updateExpense = async (id, data) => { await expAPI.update(id, data); await loadAll(); setEditingExpense(null); };
+  const deleteExpense = async (id) => { await expAPI.remove(id); await loadAll(); };
+  const addRevenue = async (data) => { await revAPI.create(data); await loadAll(); setActive("Revenues"); };
+  const updateRevenue = async (id, data) => { await revAPI.update(id, data); await loadAll(); setEditingRevenue(null); };
+  const deleteRevenue = async (id) => { await revAPI.remove(id); await loadAll(); };
+  const updateUser = async (payload) => { await userAPI.update(payload); const r = await userAPI.get(); setUser(r); };
 
   const toggleMode = () => setDarkMode(!darkMode);
 
@@ -116,16 +98,12 @@ export default function Dashboard() {
       {active === "Dashboard" && (
         <>
           <TotalsCard totalExpenses={totalExpenses} totalRevenues={totalRevenues} balance={balance} />
-
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 12 }}>
             <div>
               <Filters categories={categories} onFilter={applyFilter} />
               <ExpenseList
                 items={expenses}
-                onEdit={(e) => {
-                  setEditingExpense(e);
-                  setActive("Expenses");
-                }}
+                onEdit={(e) => { setEditingExpense(e); setActive("Expenses"); }}
                 onDelete={deleteExpense}
               />
             </div>
@@ -139,27 +117,23 @@ export default function Dashboard() {
         </>
       )}
 
+      {/* Expenses Tab */}
       {active === "Expenses" && (
         <>
           <Filters categories={categories} onFilter={applyFilter} />
           <ExpenseForm
-            onSubmit={async (payload) => {
-              if (editingExpense) await updateExpense(editingExpense.id, payload);
-              else await addExpense(payload);
-            }}
+            onSubmit={async (payload) => { editingExpense ? await updateExpense(editingExpense.id, payload) : await addExpense(payload); }}
             initial={editingExpense}
           />
           <ExpenseList items={expenses} onEdit={(e) => setEditingExpense(e)} onDelete={deleteExpense} />
         </>
       )}
 
+      {/* Revenues Tab */}
       {active === "Revenues" && (
         <>
           <RevenueForm
-            onSubmit={async (payload) => {
-              if (editingRevenue) await updateRevenue(editingRevenue.id, payload);
-              else await addRevenue(payload);
-            }}
+            onSubmit={async (payload) => { editingRevenue ? await updateRevenue(editingRevenue.id, payload) : await addRevenue(payload); }}
             initial={editingRevenue}
           />
           <div style={{ height: 12 }} />
@@ -192,10 +166,7 @@ export default function Dashboard() {
         </>
       )}
 
-      {/* Bill Scanner */}
-      {active === "Bill Scanner" && (
-        <BillScanner onAddExpense={addExpense} />
-      )}
+      {active === "Bill Scanner" && <BillScanner onAddExpense={addExpense} />}
 
       {active === "Charts" && (
         <>
@@ -210,24 +181,16 @@ export default function Dashboard() {
       )}
 
       {active === "Budget" && (
-        <>
-          <div className="card">
-            <h3>Update Name / Budget</h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const fd = Object.fromEntries(new FormData(e.target));
-                updateUser({ name: fd.name, budget: parseFloat(fd.budget) });
-              }}
-            >
-              <div className="form-row">
-                <input name="name" defaultValue={user.name} className="input" />
-                <input name="budget" defaultValue={user.budget} className="input" type="number" />
-                <button className="btn btn-primary" type="submit">Save</button>
-              </div>
-            </form>
-          </div>
-        </>
+        <div className="card">
+          <h3>Update Name / Budget</h3>
+          <form onSubmit={(e) => { e.preventDefault(); const fd = Object.fromEntries(new FormData(e.target)); updateUser({ name: fd.name, budget: parseFloat(fd.budget) }); }}>
+            <div className="form-row">
+              <input name="name" defaultValue={user.name} className="input" />
+              <input name="budget" defaultValue={user.budget} className="input" type="number" />
+              <button className="btn btn-primary" type="submit">Save</button>
+            </div>
+          </form>
+        </div>
       )}
 
       {active === "Settings" && (
