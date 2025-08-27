@@ -16,7 +16,7 @@ const Revenue = () => {
   const fetchRevenues = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/revenues");
+      const res = await axios.get("https://spendwise-ai-78vp.onrender.com/api/revenues");
       setRevenues(res.data);
     } catch (err) {
       console.error("Error fetching revenues:", err);
@@ -32,7 +32,7 @@ const Revenue = () => {
       return;
     }
     try {
-      const res = await axios.post("http://localhost:5000/api/revenues", {
+      const res = await axios.post("https://spendwise-ai-78vp.onrender.com/api/revenues", {
         amount,
         description,
         date,
@@ -48,7 +48,7 @@ const Revenue = () => {
 
   const deleteRevenue = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/revenues/${id}`);
+      await axios.delete(`https://spendwise-ai-78vp.onrender.com/revenues/${id}`);
       setRevenues(revenues.filter((rev) => rev.id !== id));
     } catch (err) {
       console.error("Error deleting revenue:", err);
